@@ -1,0 +1,118 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# The outer verification loop. It runs the same `make` verbs the local hooks
+# run -- that is the point of the single command surface. If CI and local ever
+# need different commands, the Makefile is wrong.
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: check-${{ matrix.stack }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        stack: [py, ts]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # ------------------------------------------------------------ python --
+      - name: Set up Python
+        if: matrix.stack == 'py'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install uv
+        if: matrix.stack == 'py'
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+
+      # -------------------------------------------------------- typescript --
+      - name: Install pnpm
+        if: matrix.stack == 'ts'
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Set up Node
+        if: matrix.stack == 'ts'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+          cache-dependency-path: examples/typescript/pnpm-lock.yaml
+
+      # ------------------------------------------------------------- gate --
+      - name: Install dependencies
+        run: make setup-${{ matrix.stack }}
+
+      - name: Run the gate
+        run: make check-${{ matrix.stack }}
+
+  docs:
+    name: docs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Enforces the CLAUDE.md line cap, reports the always-on context budget,
+      # and verifies every relative link between docs resolves. See
+      # docs/strategy/01-context-engineering.md for why the cap is load-bearing.
+      - name: Check documentation invariants
+        run: make lint-docs
+
+  hooks:
+    name: hooks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Shell-check the hooks parse
+        run: |
+          for f in .claude/hooks/*.sh scripts/*.sh; do
+            bash -n "$f" || exit 1
+            [ -x "$f" ] || { echo "$f is not executable"; exit 1; }
+          done
+          echo "all hooks parse and are executable"
+
+      # An untested guardrail is a guardrail you merely believe in. These drive
+      # the hooks with the JSON payloads Claude Code actually sends.
+      - name: Guardrails block what they should
+        env:
+          CLAUDE_PROJECT_DIR: ${{ github.workspace }}
+        run: |
+          set -e
+          fail=0
+          expect() { # expect <path> <deny|allow>
+            out=$(jq -nc --arg p "$CLAUDE_PROJECT_DIR/$1" '{tool_input:{file_path:$p}}' \
+                  | .claude/hooks/protect-paths.sh)
+            got=allow
+            [ -n "$out" ] && got=$(echo "$out" | jq -r '.hookSpecificOutput.permissionDecision')
+            if [ "$got" != "$2" ]; then
+              echo "  $1: expected $2, got $got"; fail=1
+            else
+              echo "  $1: $got"
+            fi
+          }
+          expect .env                                      deny
+          expect .env.local                                deny
+          expect secrets/token.txt                         deny
+          expect examples/typescript/pnpm-lock.yaml        deny
+          expect .github/workflows/ci.yml                  deny
+          expect .env.example                              allow
+          expect examples/python/src/ratelimit/bucket.py   allow
+          exit $fail

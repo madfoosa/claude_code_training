@@ -1,0 +1,55 @@
+name: Feature or change
+description: Propose new behaviour, or a change to how the kit works
+labels: [enhancement]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Describe the **problem**, not the solution. "Users can't tell why a
+        request was throttled" leaves the design open. "Add a `retry_after`
+        field" has already decided it — and may have decided wrong.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: What is hard, missing, or wrong today? Who hits it, and when?
+    validations:
+      required: true
+
+  - type: textarea
+    id: outcome
+    attributes:
+      label: What would "done" look like
+      description: How would you know this was solved? Be concrete enough that it could be verified.
+    validations:
+      required: true
+
+  - type: textarea
+    id: approach
+    attributes:
+      label: Possible approach
+      description: Optional. If you have one in mind, say so — and say what you considered and rejected.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Example slices (Python / TypeScript)
+        - Guardrails (hooks, permissions)
+        - Context (CLAUDE.md, rules)
+        - Workflows (skills, subagents)
+        - Docs (strategy, ADRs, runbooks)
+        - CI and tracking
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope check
+      options:
+        - label: If this changes one example slice, the other needs the matching change (or a stated reason it is stack-specific)
+        - label: This is expensive to reverse and probably warrants an ADR

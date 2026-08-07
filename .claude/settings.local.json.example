@@ -1,0 +1,37 @@
+// Copy to .claude/settings.local.json (gitignored) for personal, per-machine
+// settings. Local settings override project settings.
+//
+// NOTE: strip these comments first -- settings.json must be valid JSON.
+//
+// Telemetry is OFF by default. Turn it on here rather than in the committed
+// settings.json, so you are choosing it for yourself. See
+// docs/strategy/08-measurement.md for what each metric is actually good for.
+//
+// {
+//   "env": {
+//     "CLAUDE_CODE_ENABLE_TELEMETRY": "1",
+//
+//     // Start here: prints metrics to your terminal, sends nothing anywhere.
+//     "OTEL_METRICS_EXPORTER": "console",
+//
+//     // Then graduate to a collector you run:
+//     // "OTEL_METRICS_EXPORTER": "otlp",
+//     // "OTEL_LOGS_EXPORTER": "otlp",
+//     // "OTEL_EXPORTER_OTLP_PROTOCOL": "grpc",
+//     // "OTEL_EXPORTER_OTLP_ENDPOINT": "http://localhost:4317",
+//
+//     // Prompt and response bodies are OFF deliberately. Turning these on
+//     // ships your source and your prompts to the collector. Only do it if you
+//     // own the collector and understand the retention policy.
+//     // "OTEL_LOG_USER_PROMPTS": "1",
+//     // "OTEL_LOG_TOOL_DETAILS": "1"
+//   },
+//
+//   // Escape hatch for a session that genuinely must edit a protected path.
+//   // Deliberate and visible; see .claude/hooks/protect-paths.sh.
+//   // "env": { "CLAUDE_ALLOW_PROTECTED": "1" },
+//
+//   // Paths from other teams' CLAUDE.md files you don't want loaded.
+//   "claudeMdExcludes": []
+// }
+{}

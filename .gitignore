@@ -1,0 +1,39 @@
+# Verification stamp written by `make check`, read by .claude/hooks/stop-gate.sh
+.make-check-stamp
+
+# Session handoff notes are personal and per-machine; see /handoff
+HANDOFF.md
+
+# Personal, uncommitted Claude Code config
+.claude/settings.local.json
+CLAUDE.local.md
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+dist/
+build/
+
+# Node / TypeScript
+node_modules/
+coverage/
+*.tsbuildinfo
+.eslintcache
+
+# Environment and secrets -- also denied at the tool level in .claude/settings.json
+.env
+.env.*
+!.env.example
+secrets/
+
+# Editors and OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
