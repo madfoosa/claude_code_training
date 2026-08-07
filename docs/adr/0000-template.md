@@ -1,6 +1,6 @@
 # ADR-NNNN: <short decision title>
 
-- **Status:** Proposed | Accepted | Superseded by [ADR-NNNN](NNNN-....md)
+- **Status:** Proposed | Accepted | Superseded by `ADR-NNNN` (link it when superseded)
 - **Date:** YYYY-MM-DD
 - **Deciders:** <who>
 
