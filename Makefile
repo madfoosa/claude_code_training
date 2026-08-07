@@ -16,7 +16,7 @@ TS_DIR := examples/typescript
 # working tree has been verified since it was last edited.
 STAMP := .make-check-stamp
 
-.PHONY: help setup fmt lint typecheck test check clean fmt-file \
+.PHONY: help setup fmt lint typecheck test check clean fmt-file lint-docs \
         setup-py fmt-py lint-py typecheck-py test-py check-py \
         setup-ts fmt-ts lint-ts typecheck-ts test-ts check-ts
 
@@ -35,7 +35,10 @@ setup: setup-py setup-ts ## Install dependencies for both stacks
 
 fmt: fmt-py fmt-ts ## Rewrite files to canonical format
 
-lint: lint-py lint-ts ## Check style and format without rewriting
+lint: lint-py lint-ts lint-docs ## Check style and format without rewriting
+
+lint-docs: ## Check CLAUDE.md line cap, context budget, and doc links
+	@scripts/check-docs.sh
 
 typecheck: typecheck-py typecheck-ts ## Run static type analysis
 

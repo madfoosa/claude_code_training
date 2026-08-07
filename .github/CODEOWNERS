@@ -1,0 +1,28 @@
+# Code owners.
+#
+# At solo scale this documents intent rather than gating anything -- GitHub
+# only enforces it once branch protection requires review. It costs nothing to
+# establish now and becomes load-bearing the moment a second person appears.
+#
+# The rows that matter are the last three. Files that change how every future
+# Claude session behaves deserve the same scrutiny as source code, and they
+# routinely get less because they look like documentation.
+#
+# See docs/strategy/07-tracking.md and docs/strategy/05-review-and-security.md.
+
+# Default owner for everything not matched below.
+*                       @madfoosa
+
+# The example slices.
+/examples/              @madfoosa
+
+# Agent configuration. A hook is a shell script running with your permissions;
+# a rule shapes every decision an agent makes in this repo.
+/.claude/               @madfoosa
+/CLAUDE.md              @madfoosa
+
+# The machinery that verifies everything else. Changes here weaken or
+# strengthen every other check, so they need the closest look.
+/.github/workflows/     @madfoosa
+/Makefile               @madfoosa
+/scripts/               @madfoosa
