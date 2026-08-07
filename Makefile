@@ -103,7 +103,7 @@ fmt-file: ## Format a single file: make fmt-file FILE=path/to/file
 	    cd $(PY_DIR) 2>/dev/null && \
 	    uv run --quiet ruff format "$(CURDIR)/$(FILE)" >/dev/null 2>&1; \
 	    uv run --quiet ruff check --fix --quiet "$(CURDIR)/$(FILE)" 2>&1 | tail -20 ;; \
-	  *.ts|*.tsx|*.js|*.jsx|*.mjs|*.cjs|*.json|*.md|*.yml|*.yaml) \
+	  *.ts|*.tsx|*.js|*.jsx|*.mjs|*.cjs|*.json) \
 	    cd $(TS_DIR) 2>/dev/null && \
 	    pnpm exec prettier --write --log-level error "$(CURDIR)/$(FILE)" >/dev/null 2>&1 ;; \
 	  *) exit 0 ;; \
